@@ -76,29 +76,29 @@ Item {
 
         // ── 频谱条 ───────────────────────────
         Row {
-            anchors.centerIn: parent
-            spacing: root.barSpacing
+            anchors.centerIn: parent    // 居中对齐
+            spacing: root.barSpacing   // 条间距
 
             Repeater {
-                model: root.barCount
+                model: root.barCount        //频谱条数
                 delegate: Rectangle {
                     id: bar
-                    width:  root.barWidth
+                    width:  root.barWidth       //频谱条宽度
                     // barValues[index] 范围 0-7，映射到 capsuleHeight 的 10%~100%
                     property real normalized: (root.barValues.length > index)
                                               ? root.barValues[index] / 7.0
                                               : 0.0
                     height: Math.max(2, normalized * (capsule.height - Style.marginS * 2))
-                    anchors.verticalCenter: parent.verticalCenter
-                    radius: 0   //root.barWidth / 2
+                    anchors.verticalCenter: parent.verticalCenter                   //对齐方式
+                    radius: 0               //圆角
 
-                    color: root.useThemeColor ? Color.mPrimary : "#A8AEFF"
+                    color: root.useThemeColor ? Color.mPrimary : "#A8AEFF"              //主题色或固定色
 
                     Behavior on height {
-                        NumberAnimation { duration: 50; easing.type: Easing.OutCubic }
+                        NumberAnimation { duration: 80; easing.type: Easing.OutCubic }          //响应速度
                     }
                     Behavior on color {
-                        ColorAnimation { duration: 200 }
+                        ColorAnimation { duration: 200 }            //颜色变化动画
                     }
                 }
             }
@@ -137,6 +137,24 @@ Item {
             }
         }
     }
+
+    // ── 桥接重启机制：当设置变更时，重启桥接脚本以应用新设置 ──────
+    Timer {
+        id: bridgeRestartTimer
+        interval: 100
+        repeat: false
+        onTriggered: {
+            bridge.running = false
+            bridge.running = true
+        }
+    }
+
+    function scheduleBridgeRestart() {
+        bridgeRestartTimer.restart()
+    }
+
+    onBarCountChanged: scheduleBridgeRestart()
+    onFramerateChanged: scheduleBridgeRestart()
 
     // ── Process：运行后台桥接脚本 ─────────────
     Process {

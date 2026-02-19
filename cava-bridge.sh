@@ -5,7 +5,7 @@
 #   IDLE            当没有音频时输出
 
 BARS="${1:-12}"
-FRAMERATE="${2:-30}" // 可选参数，控制 cava 输出帧率，默认为 30 FPS
+FRAMERATE="${2:-30}" # 可选参数，控制 cava 输出帧率，默认为 30 FPS
 CHARS="▁▂▃▄▅▆▇█"
 LEN=$(( ${#CHARS} - 1 ))
 CONF=$(mktemp /tmp/noctalia_cava_XXXXXX.conf)
