@@ -1,6 +1,6 @@
 # Cava Visualizer — Noctalia Bar Plugin
 
-ai生成
+ai生成，
 检测到音频播放时在任务栏显示频谱可视化，无音频时自动隐藏。
 
 ## 依赖
