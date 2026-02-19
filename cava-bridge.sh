@@ -9,6 +9,9 @@ FRAMERATE="${2:-30}" # 可选参数，控制 cava 输出帧率，默认为 30 FP
 CHARS="▁▂▃▄▅▆▇█"
 LEN=$(( ${#CHARS} - 1 ))
 CONF=$(mktemp /tmp/noctalia_cava_XXXXXX.conf)
+if ! [[ "$FRAMERATE" =~ ^[0-9]+$ ]] || [[ "$FRAMERATE" -lt 1 ]]; then
+    FRAMERATE=30
+fi
 
 cleanup() {
     trap - EXIT INT TERM
@@ -34,6 +37,8 @@ is_audio_active() {
 }
 
 start_cava() {
+    local interval
+    interval=$(awk -v fps="$FRAMERATE" 'BEGIN { if (fps <= 0) fps=30; printf "%.6f", 1 / fps }')
     cat > "$CONF" <<EOF
 [general]
 bars = $BARS
@@ -56,6 +61,7 @@ EOF
         | sed -u "$sed_dict" \
         | while IFS= read -r line; do
             echo "ACTIVE:$line"
+            sleep "$interval"
         done &
     CAVA_PID=$!
 }

@@ -14,7 +14,10 @@
   "metadata": {
     "defaultSettings": {
       "bars": 12,
-      "colorMode": "theme"
+      "barWidth": 6,
+      "barRadius": 0,
+      "colorMode": "theme",
+      "barVerticalAlign": "center"
     }
   }
 }

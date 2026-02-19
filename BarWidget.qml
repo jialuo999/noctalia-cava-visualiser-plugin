@@ -29,7 +29,13 @@ Item {
     // ── 插件设置 ─────────────────────────────
     readonly property int  barCount:   pluginApi?.pluginSettings?.bars   ?? 12
     readonly property int  framerate:  pluginApi?.pluginSettings?.framerate ?? 30  //  帧率控制
+    readonly property real barWidth:   pluginApi?.pluginSettings?.barWidth ?? 6
+    readonly property real barRadius:  pluginApi?.pluginSettings?.barRadius ?? 0
     readonly property bool useThemeColor: (pluginApi?.pluginSettings?.colorMode ?? "theme") === "theme"
+    readonly property string barVerticalAlign:
+        pluginApi?.pluginSettings?.barVerticalAlign ??
+        pluginApi?.manifest?.metadata?.defaultSettings?.barVerticalAlign ??
+        "center"
 
     // ── 状态 ─────────────────────────────────
     property bool  audioActive: false
@@ -37,7 +43,6 @@ Item {
     property var   barValues:   []   // 长度 = barCount，值 0-7
 
     // ── 布局尺寸 ──────────────────────────────
-    readonly property real barWidth:   6
     readonly property real barSpacing: 2
     readonly property real totalW:     barCount * barWidth + (barCount - 1) * barSpacing + Style.marginM * 2
 
@@ -76,7 +81,10 @@ Item {
 
         // ── 频谱条 ───────────────────────────
         Row {
-            anchors.centerIn: parent    // 居中对齐
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: root.barVerticalAlign === "center" ? parent.verticalCenter : undefined
+            anchors.bottom: root.barVerticalAlign === "bottom" ? parent.bottom : undefined
+            anchors.bottomMargin: root.barVerticalAlign === "bottom" ? 0 : 0
             spacing: root.barSpacing   // 条间距
 
             Repeater {
@@ -88,9 +96,14 @@ Item {
                     property real normalized: (root.barValues.length > index)
                                               ? root.barValues[index] / 7.0
                                               : 0.0
-                    height: Math.max(2, normalized * (capsule.height - Style.marginS * 2))
-                    anchors.verticalCenter: parent.verticalCenter                   //对齐方式
-                    radius: 0               //圆角
+                    property real maxBarHeight: root.barVerticalAlign === "bottom"
+                                                 ? (capsule.height - Style.marginS)
+                                                 : (capsule.height - Style.marginS * 2)
+                    height: Math.max(2, normalized * maxBarHeight)
+                    anchors.verticalCenter: root.barVerticalAlign === "center" ? parent.verticalCenter : undefined
+                    anchors.bottom: root.barVerticalAlign === "bottom" ? parent.bottom : undefined
+                    anchors.bottomMargin: root.barVerticalAlign === "bottom" ? 3 : 0
+                    radius: barRadius       //圆角
 
                     color: root.useThemeColor ? Color.mPrimary : "#A8AEFF"              //主题色或固定色
 
@@ -138,17 +151,17 @@ Item {
         }
     }
 
-    // ── 桥接重启机制：当设置变更时，重启桥接脚本以应用新设置 ──────
+   
     Timer {
         id: bridgeRestartTimer
-        interval: 100
+        interval: 500
         repeat: false
         onTriggered: {
             bridge.running = false
             bridge.running = true
         }
     }
-
+    
     function scheduleBridgeRestart() {
         bridgeRestartTimer.restart()
     }
@@ -168,10 +181,6 @@ Item {
         stdout: SplitParser {
             onRead: function(line) {
                 line = line.trim()
-
-                // 添加调试日志
-                Logger.d("CavaVisualizer", "Received:", line)
-
                 if (line.startsWith("ACTIVE:")) {
                     root.audioActive = true
                     root.lastActiveMs = Date.now()

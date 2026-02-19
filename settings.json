@@ -1,4 +1,7 @@
 {
-  "framerate": 57,
-  "bars": 20
+  "framerate": 60,
+  "bars": 6,
+  "barVerticalAlign": "bottom",
+  "barWidth": 11,
+  "barRadius": 1
 }
