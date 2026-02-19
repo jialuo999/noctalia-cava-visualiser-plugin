@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Io
 import qs.Commons
+import qs.Services.UI
 import qs.Widgets
 
 // ─────────────────────────────────────────────
@@ -27,10 +28,12 @@ Item {
 
     // ── 插件设置 ─────────────────────────────
     readonly property int  barCount:   pluginApi?.pluginSettings?.bars   ?? 12
+    readonly property int  framerate:  pluginApi?.pluginSettings?.framerate ?? 30  //  帧率控制
     readonly property bool useThemeColor: (pluginApi?.pluginSettings?.colorMode ?? "theme") === "theme"
 
     // ── 状态 ─────────────────────────────────
     property bool  audioActive: false
+    property double lastActiveMs: 0
     property var   barValues:   []   // 长度 = barCount，值 0-7
 
     // ── 布局尺寸 ──────────────────────────────
@@ -39,13 +42,15 @@ Item {
     readonly property real totalW:     barCount * barWidth + (barCount - 1) * barSpacing + Style.marginM * 2
 
     // 控制整个胶囊显隐
-    readonly property real contentWidth:  audioActive ? totalW : 0
-    readonly property real contentHeight: capsuleHeight
+    readonly property bool shouldShow: audioActive
+    readonly property real contentWidth:  shouldShow ? totalW : 0
+    readonly property real contentHeight: shouldShow ? capsuleHeight : 0
 
     implicitWidth:  contentWidth
     implicitHeight: contentHeight
 
-    visible: audioActive
+    visible: opacity > 0.01
+    opacity: shouldShow ? 1.0 : 0.0
 
     // ── 胶囊背景 ─────────────────────────────
     Rectangle {
@@ -58,6 +63,16 @@ Item {
         radius: Style.radiusM
 
         clip: true
+
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.RightButton
+            onClicked: function(mouse) {
+                if (mouse.button === Qt.RightButton) {
+                    PanelService.showContextMenu(contextMenu, capsule, root.screen)
+                }
+            }
+        }
 
         // ── 频谱条 ───────────────────────────
         Row {
@@ -75,12 +90,12 @@ Item {
                                               : 0.0
                     height: Math.max(2, normalized * (capsule.height - Style.marginS * 2))
                     anchors.verticalCenter: parent.verticalCenter
-                    radius: root.barWidth / 2
+                    radius: 0   //root.barWidth / 2
 
                     color: root.useThemeColor ? Color.mPrimary : "#A8AEFF"
 
                     Behavior on height {
-                        NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
+                        NumberAnimation { duration: 50; easing.type: Easing.OutCubic }
                     }
                     Behavior on color {
                         ColorAnimation { duration: 200 }
@@ -95,19 +110,53 @@ Item {
         NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
     }
 
+    Behavior on implicitHeight {
+        NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
+    }
+
+    Behavior on opacity {
+        NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
+    }
+
+    NPopupContextMenu {
+        id: contextMenu
+
+        model: [
+            {
+                "label": I18n.tr("actions.widget-settings"),
+                "action": "widget-settings",
+                "icon": "settings"
+            }
+        ]
+
+        onTriggered: function(action) {
+            contextMenu.close()
+            PanelService.closeContextMenu(root.screen)
+            if (action === "widget-settings") {
+                BarService.openPluginSettings(root.screen, root.pluginApi.manifest)
+            }
+        }
+    }
+
     // ── Process：运行后台桥接脚本 ─────────────
     Process {
         id: bridge
         // 使用插件目录内的脚本；Quickshell 把 Qt.resolvedUrl 作为文件路径
         command: ["bash", Qt.resolvedUrl("cava-bridge.sh").toString().replace("file://", ""),
-                  root.barCount.toString()]
+                  root.barCount.toString(),
+                  root.framerate.toString()]
         running: true
 
         stdout: SplitParser {
             onRead: function(line) {
                 line = line.trim()
+
+                // 添加调试日志
+                Logger.d("CavaVisualizer", "Received:", line)
+
                 if (line.startsWith("ACTIVE:")) {
                     root.audioActive = true
+                    root.lastActiveMs = Date.now()
                     var data = line.substring(7)  // 去掉 "ACTIVE:"
                     // data 形如 "▁▃▆▂▇▄▁▂▅▆▂▄"，每个字符对应一个频谱条
                     var chars = "▁▂▃▄▅▆▇█"
@@ -126,6 +175,25 @@ Item {
                     for (var j = 0; j < root.barCount; j++) zeros.push(0)
                     root.barValues = zeros
                 }
+            }
+        }
+    }
+
+    Timer {
+        id: idleGuard
+        interval: 500
+        repeat: true
+        running: true
+        onTriggered: {
+            if (!root.audioActive) {
+                return
+            }
+
+            if (Date.now() - root.lastActiveMs > 1500) {
+                root.audioActive = false
+                var zeros = []
+                for (var i = 0; i < root.barCount; i++) zeros.push(0)
+                root.barValues = zeros
             }
         }
     }
