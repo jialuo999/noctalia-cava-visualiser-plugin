@@ -1,0 +1,19 @@
+{
+  "id": "cava-visualizer",
+  "name": "Cava Visualizer",
+  "version": "1.0.0",
+  "minNoctaliaVersion": "3.6.0",
+  "author": "you",
+  "license": "MIT",
+  "description": "Audio visualizer bar widget using cava. Shows only when audio is playing.",
+  "tags": ["Bar", "Audio"],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "metadata": {
+    "defaultSettings": {
+      "bars": 12,
+      "colorMode": "theme"
+    }
+  }
+}
