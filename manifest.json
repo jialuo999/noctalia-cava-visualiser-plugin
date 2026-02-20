@@ -19,7 +19,8 @@
       "bars": 12,
       "barWidth": 6,
       "barRadius": 0,
-      "colorMode": "theme",
+      "barColorMode": "primary",
+      "barCustomColor": "#ff4d4d",
       "barVerticalAlign": "center"
     },
     "repository": {

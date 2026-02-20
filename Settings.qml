@@ -24,6 +24,14 @@ ColumnLayout {
         pluginApi?.pluginSettings?.barRadius ??
         pluginApi?.manifest?.metadata?.defaultSettings?.barRadius ??
         0
+    property string editBarColorMode:
+        pluginApi?.pluginSettings?.barColorMode ??
+        pluginApi?.manifest?.metadata?.defaultSettings?.barColorMode ??
+        "primary"
+    property color editBarCustomColor:
+        pluginApi?.pluginSettings?.barCustomColor ??
+        pluginApi?.manifest?.metadata?.defaultSettings?.barCustomColor ??
+        "#ff4d4d"
     property string editBarVerticalAlign:
         pluginApi?.pluginSettings?.barVerticalAlign ??
         pluginApi?.manifest?.metadata?.defaultSettings?.barVerticalAlign ??
@@ -102,6 +110,64 @@ ColumnLayout {
             onValueChanged: root.editBarWidth = Math.round(value)
         }
     }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: Style.marginS
+
+        NLabel {
+            label: pluginApi?.tr("settings.color.label") || "颜色"
+            description: pluginApi?.tr("settings.color.description") || "选择系统颜色或自定义颜色"
+        }
+
+        NComboBox {
+            Layout.fillWidth: true
+            model: [
+                {
+                    "key": "none",
+                    "name": pluginApi?.tr("settings.color.none") || "无"
+                },
+                {
+                    "key": "primary",
+                    "name": pluginApi?.tr("settings.color.primary") || "主要"
+                },
+                {
+                    "key": "secondary",
+                    "name": pluginApi?.tr("settings.color.secondary") || "辅助"
+                },
+                {
+                    "key": "tertiary",
+                    "name": pluginApi?.tr("settings.color.tertiary") || "第三"
+                },
+                {
+                    "key": "custom",
+                    "name": pluginApi?.tr("settings.color.custom") || "自定义"
+                }
+            ]
+            currentKey: root.editBarColorMode
+            onSelected: key => root.editBarColorMode = key
+        }
+    }
+
+    RowLayout {
+        Layout.fillWidth: true
+        spacing: Style.marginS
+        visible: root.editBarColorMode === "custom"
+
+        NLabel {
+            label: pluginApi?.tr("settings.color.custom-label") || "自定义颜色"
+            description: pluginApi?.tr("settings.color.custom-description") || "用于频谱条的自定义颜色"
+        }
+
+        NColorPicker {
+            Layout.preferredWidth: Style.sliderWidth
+            Layout.preferredHeight: Style.baseWidgetSize
+            selectedColor: root.editBarCustomColor
+            onColorSelected: function(color) {
+                root.editBarCustomColor = color
+            }
+        }
+    }
     
 
     RowLayout {
@@ -140,6 +206,8 @@ ColumnLayout {
         pluginApi.pluginSettings.bars = root.editBarCount
         pluginApi.pluginSettings.barWidth = root.editBarWidth
         pluginApi.pluginSettings.barRadius = root.editBarRadius
+        pluginApi.pluginSettings.barColorMode = root.editBarColorMode
+        pluginApi.pluginSettings.barCustomColor = root.editBarCustomColor
         pluginApi.pluginSettings.barVerticalAlign = root.editBarVerticalAlign
         pluginApi.saveSettings()
         Logger.i("CavaVisualizer", "Settings saved: framerate=" + root.editFrameRate + ", bars=" + root.editBarCount)

@@ -1,7 +1,21 @@
 {
   "framerate": 60,
-  "bars": 6,
+  "bars": 8,
   "barVerticalAlign": "bottom",
-  "barWidth": 11,
-  "barRadius": 1
+  "barWidth": 10,
+  "barRadius": 1,
+  "barColorMode": "primary",
+  "barCustomColor": {
+    "r": 0,
+    "g": 1,
+    "b": 1,
+    "a": 1,
+    "hsvHue": 0.5,
+    "hsvSaturation": 1,
+    "hsvValue": 1,
+    "hslHue": 0.5,
+    "hslSaturation": 1,
+    "hslLightness": 0.5000076293945312,
+    "valid": true
+  }
 }

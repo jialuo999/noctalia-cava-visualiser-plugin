@@ -28,11 +28,21 @@ Item {
     readonly property int  framerate:  pluginApi?.pluginSettings?.framerate ?? 30  //  帧率控制
     readonly property real barWidth:   pluginApi?.pluginSettings?.barWidth ?? 6
     readonly property real barRadius:  pluginApi?.pluginSettings?.barRadius ?? 0
-    readonly property bool useThemeColor: (pluginApi?.pluginSettings?.colorMode ?? "theme") === "theme"
+    readonly property string barColorMode:
+        pluginApi?.pluginSettings?.barColorMode ??
+        pluginApi?.manifest?.metadata?.defaultSettings?.barColorMode ??
+        "primary"
+    readonly property color barCustomColor:
+        pluginApi?.pluginSettings?.barCustomColor ??
+        pluginApi?.manifest?.metadata?.defaultSettings?.barCustomColor ??
+        "#ff4d4d"
     readonly property string barVerticalAlign:
         pluginApi?.pluginSettings?.barVerticalAlign ??
         pluginApi?.manifest?.metadata?.defaultSettings?.barVerticalAlign ??
         "center"
+
+    readonly property color barColor:
+        barColorMode === "custom" ? barCustomColor : Color.resolveColorKey(barColorMode)
 
     // ── 状态 ─────────────────────────────────
     property bool  audioActive: false
@@ -105,7 +115,7 @@ Item {
                         radius: barRadius
                         bottomLeftRadius: root.barVerticalAlign === "bottom" ? barRadius : 0
                         bottomRightRadius: root.barVerticalAlign === "bottom" ? barRadius : 0
-                        color: root.useThemeColor ? Color.mPrimary : '#000000'
+                        color: root.barColor
 
                         Behavior on height {
                             NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
