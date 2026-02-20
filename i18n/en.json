@@ -12,6 +12,17 @@
     "bar-width": {
       "label": "Bar width"
     },
+    "color": {
+      "label": "Color",
+      "description": "Choose a system color or a custom color",
+      "none": "None",
+      "primary": "Primary",
+      "secondary": "Secondary",
+      "tertiary": "Tertiary",
+      "custom": "Custom",
+      "custom-label": "Custom color",
+      "custom-description": "Custom color for the spectrum bars"
+    },
     "align": {
       "label": "Alignment",
       "bottom": "Bottom",
