@@ -2,20 +2,20 @@
   "framerate": 60,
   "bars": 8,
   "barVerticalAlign": "bottom",
-  "barWidth": 10,
+  "barWidth": 8,
   "barRadius": 1,
   "barColorMode": "primary",
   "barCustomColor": {
     "r": 0,
-    "g": 1,
-    "b": 1,
+    "g": 0,
+    "b": 0,
     "a": 1,
-    "hsvHue": 0.5,
-    "hsvSaturation": 1,
-    "hsvValue": 1,
-    "hslHue": 0.5,
-    "hslSaturation": 1,
-    "hslLightness": 0.5000076293945312,
-    "valid": true
+    "hsvHue": 0,
+    "hsvSaturation": 0,
+    "hsvValue": 0,
+    "hslHue": 0,
+    "hslSaturation": 0,
+    "hslLightness": 0,
+    "valid": false
   }
 }

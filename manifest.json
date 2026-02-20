@@ -1,15 +1,15 @@
 {
   "id": "cava-visualizer",
   "name": "Cava 频谱",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "minNoctaliaVersion": "3.6.0",
   "author": "jialuo",
   "license": "MIT",
   "description": "基于 cava 的任务栏音频频谱插件，仅在播放音频时显示。",
   "dependencies": {
-    "cava": ">=1.0.0"
+    "plugins": ["cava"]
   },
-  "tags": ["Bar", "Audio"],
+  "tags": ["Bar", "Audio","Fun"],
   "entryPoints": {
     "barWidget": "BarWidget.qml",
     "settings": "Settings.qml"
