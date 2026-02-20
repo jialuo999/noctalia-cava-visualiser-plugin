@@ -6,10 +6,7 @@ import qs.Commons
 import qs.Services.UI
 import qs.Widgets
 
-// ─────────────────────────────────────────────
-//  Cava Visualizer — Noctalia Bar Widget
-//  依赖：cava, pactl (pipewire-pulse 或 pulseaudio)
-// ─────────────────────────────────────────────
+
 Item {
     id: root
 
