@@ -1,15 +1,13 @@
-# Cava Visualizer — Noctalia 任务栏音频频谱插件
-为 Noctalia 桌面环境提供轻量级音频频谱可视化功能，仅在检测到音频播放时显示频谱动画，无音频时自动隐藏，零闲置资源占用。
+# Cava Visualizer — 基于cava的Noctalia shell音频频谱插件
+提供轻量级音频频谱可视化功能，仅在检测到音频播放时显示频谱动画，无音频时自动隐藏。  
+插件中的cava桥接脚本灵感来源于[SHORiN-KiWATA的waybar音频可视化组件](https://github.com/SHORiN-KiWATA/Shorin-ArchLinux-Guide/blob/72659416bf4b931f5b27296f281b80430779c2ec/dotfiles/.config/waybar/scripts/cava.sh)  
+本项目由ai辅助完成  
 
-## 功能特性
-- 🎵 实时音频频谱可视化，适配 PulseAudio/PipeWire 音频环境
-- 🎛️ 可自定义频谱条数量、宽度、圆角、对齐方式等样式
-- ⚡ 智能资源管理：无音频时自动停止 cava 进程，仅监听音频事件（零 CPU 开销）
-- 🎨 双配色模式：适配主题色 / 固定强调色
-- 🧩 无缝兼容常见音频应用（包括 QQ 音乐 Electron 客户端）
+## 功能
+-调节音频条的帧率、圆角、宽度、音频条数、颜色、对齐方式。
 
-## 依赖要求
-插件运行依赖以下工具，需提前安装：
+## 依赖
+确保已安装cava和音频服务器PulseAudio或者PipeWire
 
 ```bash
 # Arch Linux / Manjaro
@@ -25,9 +23,6 @@ sudo pacman -S cava pipewire-pulse
    ```bash
    # 本地插件目录（推荐）
    cp -r cava-visualizer/ ~/.config/noctalia/plugins/
-
-   # 或通过 noctalia-cli 安装（若使用官方插件仓库）
-   # noctalia-cli install cava-visualizer
    ```
 
 2. 赋予脚本执行权限：
@@ -39,18 +34,6 @@ sudo pacman -S cava pipewire-pulse
    - 打开 Noctalia 设置面板
    - 进入「插件」选项卡，启用「Cava Visualizer」
    - 将「cava-visualizer」添加到任务栏组件列表
-
-## 配置说明
-在 Noctalia 插件设置面板中可调整以下参数：
-
-| 配置项 | 默认值 | 说明 |
-|--------|--------|------|
-| `bars` | 12 | 频谱条数量（建议 4-24 之间） |
-| `barWidth` | 6 | 单个频谱条宽度（像素） |
-| `barRadius` | 0 | 频谱条圆角半径（像素） |
-| `barVerticalAlign` | center | 频谱条垂直对齐方式（top/center/bottom） |
-| `colorMode` | theme | 配色模式：<br>- `theme`：跟随系统主题色<br>- `accent`：使用固定紫色强调色 |
-| `framerate` | 30 | 频谱更新帧率（默认 30 FPS，可设 60 提升流畅度） |
 
 ## 工作原理
 插件采用「事件驱动 + 进程隔离」设计，保证低资源占用：
@@ -65,16 +48,10 @@ Noctalia 任务栏 (BarWidget.qml)
             - IDLE ｜ 无音频时输出（触发隐藏动画）
 ```
 
-### 核心机制
-- **音频检测**：通过 `pactl list sink-inputs` 检测活跃音频流，无音频时停止 cava 进程
-- **数据传输**：cava 输出 ASCII 格式频谱数据，QML 侧归一化后渲染动画
-- **资源优化**：无音频时仅保留 `pactl subscribe` 监听进程，避免无效轮询
 
-## 兼容性说明
-- ✅ QQ 音乐（Electron/MPRIS2）：音频流正常被 cava 捕获，频谱显示正常
-- ✅ 网易云音乐 / Spotify / 浏览器音频：完美兼容
-- ✅ PipeWire/PulseAudio 音频栈：原生支持（需确保默认音频源为 PulseAudio）
-- ❌ ALSA 纯音频环境：需手动修改 `cava-bridge.sh` 中 `input.method` 为 `alsa`
+## 说明
+写这个插件主要是我用qq音乐放歌但是官方的可视化插件无法识别（好像是因为qqmusic的签名是Electron来着）  
+要是有谁知道怎么解决的欢迎在issues讨论。
 
 ## 常见问题
 1. **无频谱显示但音频正常播放**
