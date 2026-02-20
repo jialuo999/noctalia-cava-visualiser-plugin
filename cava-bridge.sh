@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /bin/bash
 # cava-bridge.sh — 被 BarWidget.qml 通过 Process 调用
 # 输出格式：
 #   ACTIVE:<bars>   当音频活跃时，每帧输出一次
@@ -6,7 +6,7 @@
 
 BARS="${1:-12}"
 FRAMERATE="${2:-30}" # 可选参数，控制 cava 输出帧率，默认为 30 FPS
-LEN=7  # ascii_max_range，对应值域 0-7
+ASCII_MAX=16  # cava 输出值域上限，QML 侧 /10.0 归一化依赖此值
 CONF=$(mktemp /tmp/noctalia_cava_XXXXXX.conf)
 if ! [[ "$FRAMERATE" =~ ^[0-9]+$ ]] || [[ "$FRAMERATE" -lt 1 ]]; then
     FRAMERATE=30
@@ -42,7 +42,7 @@ source = auto
 method = raw
 raw_target = /dev/stdout
 data_format = ascii
-ascii_max_range = $LEN
+ascii_max_range = $ASCII_MAX
 EOF
     # cava 每行输出一帧，格式为 "0;3;7;2;...;\n"，直接加前缀 ACTIVE:
     # 末尾分号由 cava 自带，QML 侧 split 后过滤空元素即可
