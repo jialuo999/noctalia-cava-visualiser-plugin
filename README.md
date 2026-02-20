@@ -1,7 +1,9 @@
 # Cava Visualizer — 基于cava的Noctalia shell音频频谱插件
 提供轻量级音频频谱可视化功能，仅在检测到音频播放时显示频谱动画，无音频时自动隐藏。  
 插件中的cava桥接脚本灵感来源于[SHORiN-KiWATA的waybar音频可视化组件](https://github.com/SHORiN-KiWATA/Shorin-ArchLinux-Guide/blob/72659416bf4b931f5b27296f281b80430779c2ec/dotfiles/.config/waybar/scripts/cava.sh)  
-本项目由ai辅助完成  
+本项目由ai辅助完成    
+
+![预览图片](preview.png)
 
 ## 功能
 -调节音频条的帧率、圆角、宽度、音频条数、颜色、对齐方式。
