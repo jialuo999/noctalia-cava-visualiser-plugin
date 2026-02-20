@@ -40,7 +40,7 @@ Item {
     // ── 状态 ─────────────────────────────────
     property bool  audioActive: false
     property double lastActiveMs: 0
-    property var   barValues:   []   // 长度 = barCount，值 0-7（cava ascii_max_range）
+    property var   barValues:   []   // 长度 = barCount，每项为 0-10 的数字，来自 cava 输出，映射到条高
 
     // ── 布局尺寸 ──────────────────────────────
     readonly property real barSpacing: 2
@@ -85,33 +85,53 @@ Item {
             anchors.verticalCenter: root.barVerticalAlign === "center" ? parent.verticalCenter : undefined
             anchors.bottom: root.barVerticalAlign === "bottom" ? parent.bottom : undefined
             anchors.bottomMargin: root.barVerticalAlign === "bottom" ? 0 : 0
-            spacing: root.barSpacing   // 条间距
+            spacing: root.barSpacing
 
             Repeater {
-                model: root.barCount        //频谱条数
-                delegate: Rectangle {
-                    id: bar
-                    width:  root.barWidth       //频谱条宽度
-                    // barValues[index] 范围 0-7，映射到 capsuleHeight 的 10%~100%
-                    property real normalized: (root.barValues.length > index)
-                                              ? root.barValues[index] / 7.0
-                                              : 0.0
-                    property real maxBarHeight: root.barVerticalAlign === "bottom"
-                                                 ? (capsule.height - Style.marginS)
-                                                 : (capsule.height - Style.marginS * 2)
-                    height: Math.max(2, normalized * maxBarHeight)
-                    anchors.verticalCenter: root.barVerticalAlign === "center" ? parent.verticalCenter : undefined
-                    anchors.bottom: root.barVerticalAlign === "bottom" ? parent.bottom : undefined
-                    anchors.bottomMargin: root.barVerticalAlign === "bottom" ? 3 : 0
-                    radius: barRadius
+                model: root.barCount
+                delegate: Item {
+                    width: root.barWidth
+                    height: capsule.height
 
-                    color: root.useThemeColor ? Color.mPrimary : "#A8AEFF" 
+                    Rectangle {
+                        id: bar
+                        width: root.barWidth
+                        property real normalized: (root.barValues.length > index)
+                                                ? root.barValues[index] / 16.0
+                                                : 0.0
+                        property real maxBarHeight: root.barVerticalAlign === "bottom"
+                                                    ? (capsule.height - Style.marginS - 3)
+                                                    : (capsule.height - Style.marginS * 2)
+                        height: root.barVerticalAlign === "bottom" ? Math.max(0.4, normalized * maxBarHeight) : Math.max(0.4, normalized * maxBarHeight / 2)
+                        anchors.bottom: root.barVerticalAlign === "bottom" ? parent.bottom : parent.verticalCenter
+                        anchors.bottomMargin: root.barVerticalAlign === "bottom" ? 3 : 0
+                        radius: barRadius
+                        bottomLeftRadius: root.barVerticalAlign === "bottom" ? barRadius : 0
+                        bottomRightRadius: root.barVerticalAlign === "bottom" ? barRadius : 0
+                        color: root.useThemeColor ? Color.mPrimary : '#000000'
 
-                    Behavior on height {
-                        NumberAnimation { duration: 80; easing.type: Easing.OutCubic }          //响应速度
+                        Behavior on height {
+                            NumberAnimation { duration: 80; easing.type: Easing.OutCubic }
+                        }
+                        Behavior on color {
+                            ColorAnimation { duration: 200 }
+                        }
                     }
-                    Behavior on color {
-                        ColorAnimation { duration: 200 }            //颜色变化动画
+
+                    // 镜像条，仅 center 模式显示,解决垂直居中抖动问题
+                    Rectangle {
+                        visible: root.barVerticalAlign === "center"
+                        width: bar.width
+                        height: bar.height
+                        anchors.top: parent.verticalCenter
+                        radius: bar.radius
+                        bottomLeftRadius: 0
+                        bottomRightRadius: 0
+                        color: bar.color
+                        transform: Scale {
+                            yScale: -1
+                            origin.y: bar.height / 2 - 0.1 //-0.1，消除中间的缝隙
+                        }
                     }
                 }
             }
