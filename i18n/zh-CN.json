@@ -1,0 +1,21 @@
+{
+  "settings": {
+    "frame-rate": {
+      "label": "帧率"
+    },
+    "bar-radius": {
+      "label": "圆角"
+    },
+    "bar-count": {
+      "label": "频谱条数量"
+    },
+    "bar-width": {
+      "label": "频谱条宽度"
+    },
+    "align": {
+      "label": "对齐方式",
+      "bottom": "底部对齐",
+      "center": "垂直居中"
+    }
+  }
+}

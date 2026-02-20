@@ -1,0 +1,21 @@
+{
+  "settings": {
+    "frame-rate": {
+      "label": "Frame rate"
+    },
+    "bar-radius": {
+      "label": "Bar radius"
+    },
+    "bar-count": {
+      "label": "Bar count"
+    },
+    "bar-width": {
+      "label": "Bar width"
+    },
+    "align": {
+      "label": "Alignment",
+      "bottom": "Bottom",
+      "center": "Center"
+    }
+  }
+}

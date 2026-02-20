@@ -35,7 +35,7 @@ ColumnLayout {
         spacing: Style.marginS
 
         NLabel {
-            label: "帧率: " + root.editFrameRate
+            label: (pluginApi?.tr("settings.frame-rate.label") || "帧率") + ": " + root.editFrameRate
         }
 
         NSlider {
@@ -53,7 +53,7 @@ ColumnLayout {
         spacing: Style.marginS
 
         NLabel {
-            label: "圆角: " + root.editBarRadius
+            label: (pluginApi?.tr("settings.bar-radius.label") || "圆角") + ": " + root.editBarRadius
         }
 
         NSlider {
@@ -72,7 +72,7 @@ ColumnLayout {
         spacing: Style.marginS
 
         NLabel {
-            label: "频谱条数量：" + root.editBarCount
+            label: (pluginApi?.tr("settings.bar-count.label") || "频谱条数量") + ": " + root.editBarCount
         }
 
         NSlider {
@@ -90,7 +90,7 @@ ColumnLayout {
         spacing: Style.marginS
 
         NLabel {
-            label: "频谱条宽度：" + root.editBarWidth
+            label: (pluginApi?.tr("settings.bar-width.label") || "频谱条宽度") + ": " + root.editBarWidth
         }
 
         NSlider {
@@ -109,7 +109,7 @@ ColumnLayout {
         spacing: Style.marginS
 
         NLabel {
-            label: "对齐方式"
+            label: pluginApi?.tr("settings.align.label") || "对齐方式"
         }
 
         NComboBox {
@@ -117,11 +117,11 @@ ColumnLayout {
             model: [
                 {
                     "key": "bottom",
-                    "name": "底部对齐"
+                    "name": pluginApi?.tr("settings.align.bottom") || "底部对齐"
                 },
                 {
                     "key": "center",
-                    "name": "垂直居中"
+                    "name": pluginApi?.tr("settings.align.center") || "垂直居中"
                 }
             ]
             currentKey: root.editBarVerticalAlign
