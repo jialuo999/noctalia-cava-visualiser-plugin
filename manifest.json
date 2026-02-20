@@ -6,6 +6,9 @@
   "author": "jialuo",
   "license": "MIT",
   "description": "Audio visualizer bar widget using cava. Shows only when audio is playing.",
+  "dependencies": {
+    "cava": ">=1.0.0"
+  },
   "tags": ["Bar", "Audio"],
   "entryPoints": {
     "barWidget": "BarWidget.qml",
@@ -18,6 +21,10 @@
       "barRadius": 0,
       "colorMode": "theme",
       "barVerticalAlign": "center"
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/jialuo999/noctalia-cava-visualiser-plugin.git"
     }
   }
 }
