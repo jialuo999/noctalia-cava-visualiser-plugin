@@ -137,7 +137,7 @@ Item {
                         color: bar.color
                         transform: Scale {
                             yScale: -1
-                            origin.y: bar.height / 2 - 0.1 //-0.1，消除中间的缝隙
+                            origin.y: bar.height / 2 - 0.2 //消除中间的缝隙
                         }
                     }
                 }
