@@ -29,19 +29,13 @@ ColumnLayout {
         pluginApi?.manifest?.metadata?.defaultSettings?.barVerticalAlign ??
         "center"
     
-    NText {
-        text: "你好，世界"
-        font.pointSize: Style.fontSizeL
-        color: Color.mOnSurface
-    }
 
     ColumnLayout {
         Layout.fillWidth: true
         spacing: Style.marginS
 
         NLabel {
-            label: "帧率"
-            description: "频谱刷新率：" + root.editFrameRate
+            label: "帧率: " + root.editFrameRate
         }
 
         NSlider {
@@ -59,8 +53,26 @@ ColumnLayout {
         spacing: Style.marginS
 
         NLabel {
-            label: "频谱条数量"
-            description: "频谱条数量：" + root.editBarCount
+            label: "圆角: " + root.editBarRadius
+        }
+
+        NSlider {
+            Layout.fillWidth: true
+            from: 0
+            to: 12
+            stepSize: 1
+            value: root.editBarRadius
+            onValueChanged: root.editBarRadius = Math.round(value)
+        }
+    }
+
+
+    ColumnLayout {
+        Layout.fillWidth: true
+        spacing: Style.marginS
+
+        NLabel {
+            label: "频谱条数量：" + root.editBarCount
         }
 
         NSlider {
@@ -78,27 +90,26 @@ ColumnLayout {
         spacing: Style.marginS
 
         NLabel {
-            label: "频谱条宽度"
-            description: "每条宽度：" + root.editBarWidth
+            label: "频谱条宽度：" + root.editBarWidth
         }
 
         NSlider {
             Layout.fillWidth: true
-            from: 2
-            to: 12
+            from: 1
+            to: 30
             stepSize: 1
             value: root.editBarWidth
             onValueChanged: root.editBarWidth = Math.round(value)
         }
     }
+    
 
-    ColumnLayout {
+    RowLayout {
         Layout.fillWidth: true
         spacing: Style.marginS
 
         NLabel {
-            label: "垂直对齐"
-            description: "底部对齐或垂直居中"
+            label: "对齐方式"
         }
 
         NComboBox {
@@ -106,7 +117,7 @@ ColumnLayout {
             model: [
                 {
                     "key": "bottom",
-                    "name": "底部"
+                    "name": "底部对齐"
                 },
                 {
                     "key": "center",
@@ -118,24 +129,6 @@ ColumnLayout {
         }
     }
 
-    ColumnLayout {
-        Layout.fillWidth: true
-        spacing: Style.marginS
-
-        NLabel {
-            label: "圆角"
-            description: "频谱条圆角半径：" + root.editBarRadius
-        }
-
-        NSlider {
-            Layout.fillWidth: true
-            from: 0
-            to: 12
-            stepSize: 1
-            value: root.editBarRadius
-            onValueChanged: root.editBarRadius = Math.round(value)
-        }
-    }
 
     function saveSettings() {
         if (!pluginApi) {
