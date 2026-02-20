@@ -40,7 +40,7 @@ Item {
     // ── 状态 ─────────────────────────────────
     property bool  audioActive: false
     property double lastActiveMs: 0
-    property var   barValues:   []   // 长度 = barCount，值 0-7
+    property var   barValues:   []   // 长度 = barCount，值 0-7（cava ascii_max_range）
 
     // ── 布局尺寸 ──────────────────────────────
     readonly property real barSpacing: 2
@@ -103,9 +103,9 @@ Item {
                     anchors.verticalCenter: root.barVerticalAlign === "center" ? parent.verticalCenter : undefined
                     anchors.bottom: root.barVerticalAlign === "bottom" ? parent.bottom : undefined
                     anchors.bottomMargin: root.barVerticalAlign === "bottom" ? 3 : 0
-                    radius: barRadius       //圆角
+                    radius: barRadius
 
-                    color: root.useThemeColor ? Color.mPrimary : "#A8AEFF"              //主题色或固定色
+                    color: root.useThemeColor ? Color.mPrimary : "#A8AEFF" 
 
                     Behavior on height {
                         NumberAnimation { duration: 80; easing.type: Easing.OutCubic }          //响应速度
@@ -185,12 +185,12 @@ Item {
                     root.audioActive = true
                     root.lastActiveMs = Date.now()
                     var data = line.substring(7)  // 去掉 "ACTIVE:"
-                    // data 形如 "▁▃▆▂▇▄▁▂▅▆▂▄"，每个字符对应一个频谱条
-                    var chars = "▁▂▃▄▅▆▇█"
+                    // data 形如 "0;3;7;2;5;4;1;2;6;7;2;4;" 分号分隔的原始数字
+                    var parts = data.split(";")
                     var vals = []
-                    for (var i = 0; i < data.length && i < root.barCount; i++) {
-                        var idx = chars.indexOf(data[i])
-                        vals.push(idx >= 0 ? idx : 0)
+                    for (var i = 0; i < parts.length && vals.length < root.barCount; i++) {
+                        var n = parseInt(parts[i], 10)
+                        if (!isNaN(n)) vals.push(n)
                     }
                     // 补齐
                     while (vals.length < root.barCount) vals.push(0)

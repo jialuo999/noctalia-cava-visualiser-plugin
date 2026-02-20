@@ -6,8 +6,7 @@
 
 BARS="${1:-12}"
 FRAMERATE="${2:-30}" # 可选参数，控制 cava 输出帧率，默认为 30 FPS
-CHARS="▁▂▃▄▅▆▇█"
-LEN=$(( ${#CHARS} - 1 ))
+LEN=7  # ascii_max_range，对应值域 0-7
 CONF=$(mktemp /tmp/noctalia_cava_XXXXXX.conf)
 if ! [[ "$FRAMERATE" =~ ^[0-9]+$ ]] || [[ "$FRAMERATE" -lt 1 ]]; then
     FRAMERATE=30
@@ -22,15 +21,6 @@ cleanup() {
     exit 0
 }
 trap cleanup EXIT INT TERM
-
-# 生成 sed 替换字典（数字 → 字符）
-make_sed_dict() {
-    local dict="s/;//g;"
-    for ((i=0; i<=LEN; i++)); do
-        dict="${dict}s/$i/${CHARS:$i:1}/g;"
-    done
-    echo "$dict"
-}
 
 is_audio_active() {
     pactl list sink-inputs 2>/dev/null | grep -q "Corked: no"
@@ -54,11 +44,9 @@ raw_target = /dev/stdout
 data_format = ascii
 ascii_max_range = $LEN
 EOF
-    local sed_dict
-    sed_dict=$(make_sed_dict)
-    # cava 每行输出一帧，通过 sed 转换为字符后加前缀 ACTIVE:
+    # cava 每行输出一帧，格式为 "0;3;7;2;...;\n"，直接加前缀 ACTIVE:
+    # 末尾分号由 cava 自带，QML 侧 split 后过滤空元素即可
     cava -p "$CONF" 2>/dev/null \
-        | sed -u "$sed_dict" \
         | while IFS= read -r line; do
             echo "ACTIVE:$line"
             sleep "$interval"
