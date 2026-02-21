@@ -27,8 +27,6 @@ is_audio_active() {
 }
 
 start_cava() {
-    local interval
-    interval=$(awk -v fps="$FRAMERATE" 'BEGIN { if (fps <= 0) fps=30; printf "%.6f", 1 / fps }')
     cat > "$CONF" <<EOF
 [general]
 bars = $BARS
@@ -44,12 +42,11 @@ raw_target = /dev/stdout
 data_format = ascii
 ascii_max_range = $ASCII_MAX
 EOF
-    # cava 每行输出一帧，格式为 "0;3;7;2;...;\n"，直接加前缀 ACTIVE:
-    # 末尾分号由 cava 自带，QML 侧 split 后过滤空元素即可
+    # cava 会按 framerate 主动控制输出频率；这里不再额外 sleep，避免双时钟导致积压/延迟
+    # 每行一帧，格式为 "0;3;7;2;...;\n"；末尾分号由 cava 自带，QML 侧 split 后过滤空元素即可
     cava -p "$CONF" 2>/dev/null \
         | while IFS= read -r line; do
             echo "ACTIVE:$line"
-            sleep "$interval"
         done &
     CAVA_PID=$!
 }
