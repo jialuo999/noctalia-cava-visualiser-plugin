@@ -147,11 +147,11 @@ Item {
 
     // ── 淡入淡出动画 ─────────────────────────
     Behavior on implicitWidth {
-        NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
+        NumberAnimation { duration: 350; easing.type: Easing.InOutQuad }
     }
 
     Behavior on implicitHeight {
-        NumberAnimation { duration: 250; easing.type: Easing.InOutQuad }
+        NumberAnimation { duration: 350; easing.type: Easing.InOutQuad }
     }
 
     Behavior on opacity {
@@ -181,7 +181,7 @@ Item {
    
     Timer {
         id: bridgeRestartTimer
-        interval: 500
+        interval: 400
         repeat: false
         onTriggered: {
             bridge.running = false
